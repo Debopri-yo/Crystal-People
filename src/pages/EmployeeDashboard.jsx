@@ -24,21 +24,23 @@ export default function EmployeeDashboard({ user, onLogout }) {
 
   useEffect(() => { load(); }, [load]);
 
-  async function runSummary() {
-    if (reviews.length === 0) return;
-    setSummaryLoading(true);
-    setSummary(null);
-    try {
-      const recent = reviews.slice(0, 3);
-      const result = await getTrendSummary(user.name, recent);
-      setSummary(result.summary);
-    } catch (err) {
-      console.error(err);
-      setSummary(null);
-    } finally {
-      setSummaryLoading(false);
+  useEffect(() => {
+    async function runSummary() {
+      if (reviews.length === 0) return;
+      setSummaryLoading(true);
+      try {
+        const recent = reviews.slice(0, 3);
+        const result = await getTrendSummary(user.name, recent);
+        setSummary(result.summary);
+      } catch (err) {
+        console.error(err);
+        setSummary(null);
+      } finally {
+        setSummaryLoading(false);
+      }
     }
-  }
+    runSummary();
+  }, [reviews, user.name]);
 
   return (
     <div className="app-shell">
@@ -65,16 +67,9 @@ export default function EmployeeDashboard({ user, onLogout }) {
               {reviews.length > 0 && (
                 <div className="ai-panel">
                   <div className="ai-panel-title">✦ AI trend summary (last 3 months)</div>
-                  {!summary && !summaryLoading && (
-                    <button className="btn-secondary" type="button" onClick={runSummary}>
-                      Generate summary
-                    </button>
-                  )}
-                  {(summaryLoading || summary) && (
-                    <div className="ai-panel-body">
-                      {summaryLoading ? 'Reading your recent reviews…' : summary}
-                    </div>
-                  )}
+                  <div className="ai-panel-body">
+                    {summaryLoading ? 'Reading your recent reviews…' : (summary || 'Summary unavailable right now.')}
+                  </div>
                 </div>
               )}
               <div style={{ marginTop: 20 }}>
