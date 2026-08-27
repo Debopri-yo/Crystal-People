@@ -5,7 +5,7 @@
 //            the numeric scores they just entered, before they submit
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = 'gemini-2.5-flash';
+const MODEL = 'gemini-3.6-flash';
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 async function callGemini({ systemInstruction, userText, maxTokens = 400 }) {
