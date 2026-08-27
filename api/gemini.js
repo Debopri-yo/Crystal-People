@@ -106,7 +106,7 @@ export default async function handler(req, res) {
 
     return res.status(400).json({ error: 'Unknown type' });
   } catch (err) {
-      console.error('gemini proxy error', err);
+  console.error('gemini proxy error', err);
   return res.status(502).json({
     error: err.message || 'Failed to reach Gemini API.'
   });
