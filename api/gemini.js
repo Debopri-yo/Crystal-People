@@ -22,7 +22,7 @@ async function callGemini({ systemInstruction, userText, maxTokens = 400 }) {
         // silently consume the whole response, leaving nothing for the
         // actual answer. We don't need hidden reasoning for these two
         // simple tasks, so we turn it off.
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: 'low' },
       },
     }),
   });
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       const text = await callGemini({
         systemInstruction: 'You are a concise, honest HR analyst who explains performance trends in plain, human language. No jargon, no bullet lists, just a short warm paragraph.',
         userText: buildSummaryPrompt(employeeName, reviews),
-        maxTokens: 500,
+        maxTokens: 700,
       });
       return res.status(200).json({ summary: text.trim() });
     }
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
       const text = await callGemini({
         systemInstruction: 'You output strict JSON only. No markdown fences, no preamble, no explanation outside the JSON object.',
         userText: buildFlagPrompt(scores, comment),
-        maxTokens: 200,
+        maxTokens: 400,
       });
       let parsed;
       try {
