@@ -15,7 +15,15 @@ async function callGemini({ systemInstruction, userText, maxTokens = 400 }) {
     body: JSON.stringify({
       system_instruction: { parts: [{ text: systemInstruction }] },
       contents: [{ role: 'user', parts: [{ text: userText }] }],
-      generationConfig: { maxOutputTokens: maxTokens },
+      generationConfig: {
+        maxOutputTokens: maxTokens,
+        // gemini-2.5-flash has "thinking" on by default, and thinking tokens
+        // count against maxOutputTokens — at low token budgets this can
+        // silently consume the whole response, leaving nothing for the
+        // actual answer. We don't need hidden reasoning for these two
+        // simple tasks, so we turn it off.
+        thinkingConfig: { thinkingBudget: 0 },
+      },
     }),
   });
 
@@ -74,7 +82,7 @@ export default async function handler(req, res) {
       const text = await callGemini({
         systemInstruction: 'You are a concise, honest HR analyst who explains performance trends in plain, human language. No jargon, no bullet lists, just a short warm paragraph.',
         userText: buildSummaryPrompt(employeeName, reviews),
-        maxTokens: 300,
+        maxTokens: 500,
       });
       return res.status(200).json({ summary: text.trim() });
     }
